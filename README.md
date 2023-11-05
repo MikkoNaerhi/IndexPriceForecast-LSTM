@@ -6,9 +6,10 @@
 This project is designed to predict future price values of the NIFTY 50 index using a Long Short-Term Memory (LSTM) neural network implemented in PyTorch. It showcases the application of deep learning techniques in financial time series forecasting.
 
 ## Features
-- Logistic Regression implementation from scratch
-- Utilizes Stochastic Gradient Descent for optimization
-- Evaluation using ROC AUC score and confusion matrix
+- Time series forecasting with an LSTM model
+- PyTorch implementation for model building and training
+- Data preprocessing for LSTM suitability
+- Evaluation using Mean Squared Error (MSE)
 
 ## How to Run
 1. Clone this repository.
