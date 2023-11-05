@@ -178,10 +178,10 @@ def plot_results(
     plt.plot(range(train_len), train_data['Price'], label='Training Data')
 
     # Plot testing data
-    plt.plot(test_index, test_data['Price'][seq_length:], label='Actual Test Data')
+    plt.plot(test_index, test_data['Price'][seq_length:], label='Test Data')
 
     # Plot the predictions for the test data
-    plt.plot(test_index, test_predictions, label='Test Predictions', color='orange')
+    plt.plot(test_index, test_predictions, label='Predictions', color='orange')
 
     plt.xlabel('Time')
     plt.ylabel('Price')
@@ -196,7 +196,10 @@ def main(plot:bool=True):
     -----------
         plot: If True, plot the results after training and evaluation.
     """
+    # Define file name and parameters
     file_name = 'nifty_index_price_data.csv'
+    learning_rate, seq_length, epochs = 0.001, 10, 100
+    train_size_perc = 0.8
 
     data = load_data(file_name)
 
@@ -208,7 +211,7 @@ def main(plot:bool=True):
     data['Price'] = data['Price'].ffill()
 
     # Split data into training and testing
-    train_size = int(len(data) * 0.8)
+    train_size = int(len(data) * train_size_perc)
     train, test = data[0:train_size], data[train_size:len(data)]
 
     # Normalize data
@@ -218,14 +221,13 @@ def main(plot:bool=True):
     test_scaled = scaler.transform(test['Price'].values.reshape(-1, 1))
 
     # Prepare sequences
-    seq_length = 10
     X_train, y_train = prepare_sequences(train_scaled, seq_length)
     X_test, y_test = prepare_sequences(test_scaled, seq_length)
 
     # Initialize model, criterion and optimizer
     model = LSTMModel(input_dim=1, hidden_dim=64)
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
     # Convert to PyTorch tensors
     X_train_tensor = torch.FloatTensor(X_train).view(-1, seq_length, 1)
@@ -236,7 +238,7 @@ def main(plot:bool=True):
     train_data = TensorDataset(X_train_tensor, y_train_tensor)
     train_loader = DataLoader(train_data, shuffle=True, batch_size=64)
 
-    train_model(model, train_loader, criterion, optimizer, epochs=100)
+    train_model(model, train_loader, criterion, optimizer, epochs=epochs)
     test_predictions = evaluate_model(model, X_test_tensor, y_test_tensor, scaler)
 
     if plot:
