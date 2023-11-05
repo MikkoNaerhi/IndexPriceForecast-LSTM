@@ -5,7 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 import torch.nn as nn
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
 class LSTMModel(nn.Module):
@@ -146,7 +146,7 @@ def evaluate_model(
         predictions_np = scaler.inverse_transform(predictions.numpy())
         y_test_np = scaler.inverse_transform(y_test_tensor.numpy())
         # Calculate the mean squared error or any other performance metric
-        mse = mean_absolute_error(y_test_np, predictions_np)
+        mse = mean_squared_error(y_test_np, predictions_np)
         print(f'Test MSE: {mse}')
         return predictions_np
     
